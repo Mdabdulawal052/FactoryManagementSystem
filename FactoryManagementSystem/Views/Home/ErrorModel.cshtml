@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewData["Title"] = "ErrorModel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    @*<table class="table table-responsive" style="margin-top:100px;">
+        <thead  class="thead-dark">
+            <tr>
+                <th scope="col">
+                    Not Pound
+                    404 Unauthorized
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">
+
+                    <p class="text">
+                        Oops, The Page you are looking for can't be found!
+                        </p>
+                    <p class="text">
+                        You Do Not Have Permission To Access This Area....
+                    </p>
+                </th>
+            </tr>
+        </tbody>
+        
+    </table>
+    <a asp-action="Index" asp-controller="Home">Go To Home page</a>*@
+    <div class="card mt-md-4" style="width: 60rem; text-align:center; margin-left:100px;">
+        <div class="card-header bg-info" style="padding:4px;"><h2>Not Pound</h2></div>
+        <div class="card-body">
+
+            <h4 class="card-subtitle mb-2 text-muted">404 Unauthorized</h4>
+            <p class="card-text">
+                Oops, The Page you are looking for can't be found!
+            </p>
+
+            <p class="text-danger">
+                You Do Not Have Permission To Access This Area....
+            </p>
+
+
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="card-footer"> <a asp-action="Index" asp-controller="Home">Go To Home page</a></div>
+    </div>
+

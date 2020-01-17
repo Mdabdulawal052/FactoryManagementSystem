@@ -1,0 +1,49 @@
+﻿@model IEnumerable<FactoryManagementSystem.Data.AdditionUserData.PermissionMap>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+   
+    <a class="btn btn-primary" href="/PermissionMaps/AccessFor/?UserId= ">Manage User</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.User.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsPermitted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsPermitted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserRole.Name)
+            </td>
+            <td>
+                <a href="/PermissionMaps/AccessFor/?UserId=@item.ApplicationUserId">Manage User</a>| @*@item.UserId*@
+                <a asp-action="Details" asp-route-id="@item.PermissionId">Details</a>
+                @*<a asp-action="Delete" asp-route-id="@item.PermissionId">Delete</a>*@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

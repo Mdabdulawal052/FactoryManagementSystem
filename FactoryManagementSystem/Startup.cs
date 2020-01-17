@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using FactoryManagementSystem.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FactoryManagementSystem.Data.AdditionUserData;
+using FactoryManagementSystem.Repository.IRepository;
+using FactoryManagementSystem.Repository;
 
 namespace FactoryManagementSystem
 {
@@ -37,8 +40,15 @@ namespace FactoryManagementSystem
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            
+            services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddTransient<IUserPermissionRepo, UserParmissionRepo>();
+            
+            //add identity
+            //services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -65,6 +75,11 @@ namespace FactoryManagementSystem
 
             app.UseMvc(routes =>
             {
+               
+                routes.MapAreaRoute(
+                    name: "MyAreaAdmin",
+                    areaName: "Admin",
+                    template: "Admin/{controller=Home}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

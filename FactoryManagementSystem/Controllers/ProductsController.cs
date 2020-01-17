@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FactoryManagementSystem.Data;
 using FactoryManagementSystem.Models;
+using FactoryManagementSystem.Repository;
+using FactoryManagementSystem.Repository.IRepository;
 
 namespace FactoryManagementSystem.Controllers
 {
@@ -14,16 +16,26 @@ namespace FactoryManagementSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductsController(ApplicationDbContext context)
+        public IUserPermissionRepo PermissionRepo;
+
+        public ProductsController(ApplicationDbContext context, IUserPermissionRepo permissionRepo)
         {
             _context = context;
+            PermissionRepo = permissionRepo;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
+            string RoleName = "ProductIndex";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
             var applicationDbContext = _context.Products.Include(p => p.Category);
             return View(await applicationDbContext.ToListAsync());
+
         }
 
         // GET: Products/Details/5
@@ -32,6 +44,7 @@ namespace FactoryManagementSystem.Controllers
             if (id == null)
             {
                 return NotFound();
+                
             }
 
             var product = await _context.Products
@@ -48,7 +61,13 @@ namespace FactoryManagementSystem.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "CategoryID");
+            string RoleName = "ProductCreate";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "Name");
             return View();
         }
 
@@ -59,19 +78,31 @@ namespace FactoryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductID,ProductName,Description,PurchasePrice,SellPrice,Quentity,CategoryID,Discontinue")] Product product)
         {
+            string RoleName = "ProductCreate";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "CategoryID", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "Name", product.CategoryID);
             return View(product);
         }
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            string RoleName = "ProductEdit";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
             if (id == null)
             {
                 return NotFound();
@@ -82,7 +113,7 @@ namespace FactoryManagementSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "CategoryID", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "Name", product.CategoryID);
             return View(product);
         }
 
@@ -93,6 +124,12 @@ namespace FactoryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProductID,ProductName,Description,PurchasePrice,SellPrice,Quentity,CategoryID,Discontinue")] Product product)
         {
+            string RoleName = "ProductEdit";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
             if (id != product.ProductID)
             {
                 return NotFound();
@@ -118,13 +155,19 @@ namespace FactoryManagementSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "CategoryID", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "Name", product.CategoryID);
             return View(product);
         }
 
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            string RoleName = "ProductDelete";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
             if (id == null)
             {
                 return NotFound();
@@ -146,6 +189,12 @@ namespace FactoryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            string RoleName = "ProductDelete";
+            string name = User.Identity.Name;
+            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            {
+                return RedirectToAction("ErrorModel", "Home");
+            }
             var product = await _context.Products.FindAsync(id);
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
