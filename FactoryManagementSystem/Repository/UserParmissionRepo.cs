@@ -66,39 +66,39 @@ namespace FactoryManagementSystem.Repository
         {
             List<PermissionViewModel> PermissionsList = new List<PermissionViewModel>();
            
-            using (SqlConnection con = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
-            {
+            //using (SqlConnection con = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+            //{
 
-                // Customer  Permittion
-                SqlDataReader reader;
-                string query01 = string.Format(@"SELECT pmap.PermissionId,uRole.RoleId,pmap.UserId, u.Name,"
-                                              +" uRole.Name as PermissionName,pmap.IsPermitted FROM PermissionMaps pmap"+
-			                                            " INNER JOIN UserRoles uRole ON pmap.RoleId=uRole.RoleId"+
-			                                            " INNER JOIN AspNetUsers u ON pmap.UserId=u.Id"+
-                                                        " where  username IS NULL OR LEN('{0}') = 0 or (username Like '%{0}%')", name);
-                Command = new SqlCommand(query01, con);
-                con.Open();
-                reader = Command.ExecuteReader();
-                if (reader.HasRows)
-                {
+            //    // Customer  Permittion
+            //    SqlDataReader reader;
+            //    string query01 = string.Format(@"SELECT pmap.PermissionId,uRole.RoleId,pmap.UserId, u.Name,"
+            //                                  +" uRole.Name as PermissionName,pmap.IsPermitted FROM PermissionMaps pmap"+
+			         //                                   " INNER JOIN UserRoles uRole ON pmap.RoleId=uRole.RoleId"+
+			         //                                   " INNER JOIN AspNetUsers u ON pmap.UserId=u.Id"+
+            //                                            " where  username IS NULL OR LEN('{0}') = 0 or (username Like '%{0}%')", name);
+            //    Command = new SqlCommand(query01, con);
+            //    con.Open();
+            //    reader = Command.ExecuteReader();
+            //    if (reader.HasRows)
+            //    {
                    
-                    while (reader.Read())
-                    {
-                        PermissionViewModel model = new PermissionViewModel();
-                        model.PermissionId = reader.GetInt32(reader.GetOrdinal("PermissionId"));
+            //        while (reader.Read())
+            //        {
+            //            PermissionViewModel model = new PermissionViewModel();
+            //            model.PermissionId = reader.GetInt32(reader.GetOrdinal("PermissionId"));
 
-                        model.UserId = reader.GetString(reader.GetOrdinal("UserId"));
-                        model.UserName = reader.GetString(reader.GetOrdinal("Name"));
-                        model.RoleId = reader.GetInt32(reader.GetOrdinal("RoleId"));
-                        model.RoleName = reader.GetString(reader.GetOrdinal("PermissionName"));
-                        model.IsPermitted = reader.GetBoolean(reader.GetOrdinal("IsPermitted"));
-                        PermissionsList.Add(model);
-                    }
+            //            model.UserId = reader.GetString(reader.GetOrdinal("UserId"));
+            //            model.UserName = reader.GetString(reader.GetOrdinal("Name"));
+            //            model.RoleId = reader.GetInt32(reader.GetOrdinal("RoleId"));
+            //            model.RoleName = reader.GetString(reader.GetOrdinal("PermissionName"));
+            //            model.IsPermitted = reader.GetBoolean(reader.GetOrdinal("IsPermitted"));
+            //            PermissionsList.Add(model);
+            //        }
 
-                }
+            //    }
                
-                con.Close();
-            }
+            //    con.Close();
+            //}
             return PermissionsList;
         }
 
@@ -127,6 +127,57 @@ namespace FactoryManagementSystem.Repository
                 Context.SaveChanges();
             }
             
+        }
+
+        public bool UpdatePassword(string name)
+        {
+            bool isUpdate=false;
+            var data=0;
+            using (SqlConnection con = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+            {
+
+                // Customer  Permittion
+                string query01 = string.Format(@"update AspNetUsers 
+	                                        set PasswordHash ='123456'
+	                                        where UserName ='"+ name + "'");
+                Command = new SqlCommand(query01, con);
+                con.Open();
+                data = Command.ExecuteNonQuery();
+                con.Close();
+            }
+
+            if (data>0)
+            {
+                isUpdate = true;
+            }
+            return isUpdate;
+        }
+        public bool DeletePermission(string id)
+        {
+            bool isDelete = false;
+            var data = 0;
+            using (SqlConnection con = new SqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+            {
+
+                // Customer  Permittion
+                string query01 = string.Format(@"Delete From PermissionMaps 
+	                                        where ApplicationUserId ='" + id + "'");
+                Command = new SqlCommand(query01, con);
+                con.Open();
+                data = Command.ExecuteNonQuery();
+                con.Close();
+            }
+
+            if (data > 0)
+            {
+                isDelete = true;
+            }
+            return isDelete;
+        }
+
+        public ApplicationUser GetUserByEmail(string Email)
+        {
+            return Context.Users.Where(x => x.Email == Email).FirstOrDefault();
         }
     }
 }

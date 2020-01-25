@@ -26,6 +26,8 @@ namespace FactoryManagementSystem.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
+                    b.Property<string>("Address");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -34,11 +36,15 @@ namespace FactoryManagementSystem.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<int>("EmployeeID");
+
+                    b.Property<string>("Gender");
+
+                    b.Property<byte[]>("Image");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
-
-                    b.Property<string>("Name");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
@@ -54,12 +60,16 @@ namespace FactoryManagementSystem.Migrations
 
                     b.Property<string>("SecurityStamp");
 
+                    b.Property<bool>("Status");
+
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeID");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -72,6 +82,138 @@ namespace FactoryManagementSystem.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.Branch", b =>
+                {
+                    b.Property<int>("BranchID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BranchName");
+
+                    b.Property<bool>("BranchStatus");
+
+                    b.HasKey("BranchID");
+
+                    b.ToTable("Branches");
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.Department", b =>
+                {
+                    b.Property<int>("DepartmentID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DepartmentName");
+
+                    b.Property<bool>("DepartmentStatus");
+
+                    b.HasKey("DepartmentID");
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.Designation", b =>
+                {
+                    b.Property<int>("DesignationID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DesignationName");
+
+                    b.Property<bool>("DesignationStatus");
+
+                    b.HasKey("DesignationID");
+
+                    b.ToTable("Designations");
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.EmpLedgerTitle", b =>
+                {
+                    b.Property<int>("LedgerTitleID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("LedgerTitle");
+
+                    b.HasKey("LedgerTitleID");
+
+                    b.ToTable("EmpLedgerTitles");
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BranchID");
+
+                    b.Property<DateTime>("DOB");
+
+                    b.Property<int>("DepartmentID");
+
+                    b.Property<int>("DesignationID");
+
+                    b.Property<string>("EmployeeName");
+
+                    b.Property<string>("FatherName");
+
+                    b.Property<string>("Gender");
+
+                    b.Property<DateTime>("JoiningDate");
+
+                    b.Property<string>("MaritalStatus");
+
+                    b.Property<string>("Mobile");
+
+                    b.Property<string>("NID");
+
+                    b.Property<byte[]>("Photo");
+
+                    b.Property<decimal>("Salary");
+
+                    b.Property<bool>("Status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchID");
+
+                    b.HasIndex("DepartmentID");
+
+                    b.HasIndex("DesignationID");
+
+                    b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.EmployeeLedger", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Credit");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<decimal>("Debit");
+
+                    b.Property<int>("EmployeeID");
+
+                    b.Property<int>("LedgerTitleID");
+
+                    b.Property<string>("Remarks");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("LedgerTitleID");
+
+                    b.ToTable("EmployeeLedgers");
+                });
+
             modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.PermissionMap", b =>
                 {
                     b.Property<int>("PermissionId")
@@ -79,6 +221,8 @@ namespace FactoryManagementSystem.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ApplicationUserId");
+
+                    b.Property<int>("BranchId");
 
                     b.Property<bool>("IsPermitted");
 
@@ -260,6 +404,45 @@ namespace FactoryManagementSystem.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.ApplicationUser", b =>
+                {
+                    b.HasOne("FactoryManagementSystem.Data.AdditionUserData.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.Employee", b =>
+                {
+                    b.HasOne("FactoryManagementSystem.Data.AdditionUserData.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("FactoryManagementSystem.Data.AdditionUserData.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("FactoryManagementSystem.Data.AdditionUserData.Designation", "Designation")
+                        .WithMany()
+                        .HasForeignKey("DesignationID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.EmployeeLedger", b =>
+                {
+                    b.HasOne("FactoryManagementSystem.Data.AdditionUserData.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("FactoryManagementSystem.Data.AdditionUserData.EmpLedgerTitle", "EmpLedgerTitle")
+                        .WithMany()
+                        .HasForeignKey("LedgerTitleID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("FactoryManagementSystem.Data.AdditionUserData.PermissionMap", b =>

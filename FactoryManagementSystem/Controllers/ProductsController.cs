@@ -9,9 +9,11 @@ using FactoryManagementSystem.Data;
 using FactoryManagementSystem.Models;
 using FactoryManagementSystem.Repository;
 using FactoryManagementSystem.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FactoryManagementSystem.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,10 +31,14 @@ namespace FactoryManagementSystem.Controllers
         {
             string RoleName = "ProductIndex";
             string name = User.Identity.Name;
-            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            if (name !=MasterConfrg.SuperAdmin)
             {
-                return RedirectToAction("ErrorModel", "Home");
+                if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+                {
+                    return RedirectToAction("ErrorModel", "Home");
+                }
             }
+           
             var applicationDbContext = _context.Products.Include(p => p.Category);
             return View(await applicationDbContext.ToListAsync());
 
@@ -63,9 +69,12 @@ namespace FactoryManagementSystem.Controllers
         {
             string RoleName = "ProductCreate";
             string name = User.Identity.Name;
-            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            if (name != MasterConfrg.SuperAdmin)
             {
-                return RedirectToAction("ErrorModel", "Home");
+                if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+                {
+                    return RedirectToAction("ErrorModel", "Home");
+                }
             }
             ViewData["CategoryID"] = new SelectList(_context.Categories, "CategoryID", "Name");
             return View();
@@ -80,9 +89,12 @@ namespace FactoryManagementSystem.Controllers
         {
             string RoleName = "ProductCreate";
             string name = User.Identity.Name;
-            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            if (name != MasterConfrg.SuperAdmin)
             {
-                return RedirectToAction("ErrorModel", "Home");
+                if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+                {
+                    return RedirectToAction("ErrorModel", "Home");
+                }
             }
             if (ModelState.IsValid)
             {
@@ -99,9 +111,12 @@ namespace FactoryManagementSystem.Controllers
         {
             string RoleName = "ProductEdit";
             string name = User.Identity.Name;
-            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            if (name != MasterConfrg.SuperAdmin)
             {
-                return RedirectToAction("ErrorModel", "Home");
+                if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+                {
+                    return RedirectToAction("ErrorModel", "Home");
+                }
             }
             if (id == null)
             {
@@ -126,9 +141,12 @@ namespace FactoryManagementSystem.Controllers
         {
             string RoleName = "ProductEdit";
             string name = User.Identity.Name;
-            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            if (name != MasterConfrg.SuperAdmin)
             {
-                return RedirectToAction("ErrorModel", "Home");
+                if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+                {
+                    return RedirectToAction("ErrorModel", "Home");
+                }
             }
             if (id != product.ProductID)
             {
@@ -164,9 +182,12 @@ namespace FactoryManagementSystem.Controllers
         {
             string RoleName = "ProductDelete";
             string name = User.Identity.Name;
-            if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+            if (name != MasterConfrg.SuperAdmin)
             {
-                return RedirectToAction("ErrorModel", "Home");
+                if (PermissionRepo.GetPermission(RoleName, String.IsNullOrEmpty(name) ? "" : name) == false)
+                {
+                    return RedirectToAction("ErrorModel", "Home");
+                }
             }
             if (id == null)
             {

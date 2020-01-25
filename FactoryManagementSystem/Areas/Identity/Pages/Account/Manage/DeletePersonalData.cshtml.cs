@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FactoryManagementSystem.Data.AdditionUserData;
+using FactoryManagementSystem.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,13 +15,16 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        public IUserPermissionRepo Repo { get; }
 
         public DeletePersonalDataModel(
             UserManager<ApplicationUser> userManager,
+            IUserPermissionRepo repo,
             SignInManager<ApplicationUser> signInManager,
             ILogger<DeletePersonalDataModel> logger)
         {
             _userManager = userManager;
+            Repo = repo;
             _signInManager = signInManager;
             _logger = logger;
         }
@@ -36,6 +40,7 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
         }
 
         public bool RequirePassword { get; set; }
+   
 
         public async Task<IActionResult> OnGet()
         {
@@ -66,7 +71,7 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
             }
-
+            var deletePermission = Repo.DeletePermission(user.Id);
             var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)

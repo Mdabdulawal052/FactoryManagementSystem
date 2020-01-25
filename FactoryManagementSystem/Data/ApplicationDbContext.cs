@@ -21,5 +21,12 @@ namespace FactoryManagementSystem.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<PermissionMap> PermissionMaps { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Designation> Designations { get; set; }
+        public DbSet<EmpLedgerTitle> EmpLedgerTitles { get; set; }
+        public DbSet<EmployeeLedger> EmployeeLedgers { get; set; }
     }
 }

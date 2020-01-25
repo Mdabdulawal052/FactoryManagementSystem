@@ -1,0 +1,138 @@
+﻿@model IEnumerable<FactoryManagementSystem.Data.AdditionUserData.ApplicationUser>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>User List</h2>
+
+
+<table class="table table-responsive table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Password
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{int i =0; }
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            @*<td>
+                <input id="Id" name="@item.Id" type="checkbox" value="false" />
+            </td>*@
+            @if (ViewBag.data == item.UserName && ViewBag.data != null)
+            {
+            <td>
+                <p id="password">@item.PasswordHash</p>
+            </td>
+            }
+            else { 
+                <td></td>
+            }
+        <td>
+
+            @*<a asp-action="UpdateUserPass" asp-route-id="@item.UserName">Update Password</a>*@
+            @Html.ActionLink("Update Password", "UpdateUserPass", new { id = item.UserName },
+
+           new { onclick = "return confirm('Are Sure You Want To Update Password ?');" })
+
+        </td>
+
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+@section scripts {
+    <script type="text/javascript">
+            //function AccessFor() {
+        
+            //else if($(this).prop("checked") == false){
+            //    alert("Checkbox is unchecked.");
+            //}
+        $(document).ready(function(){
+                $("#hide").click(function(){
+                    $("p").css('visibility', 'hidden');
+                });
+                    $("#show").click(function(){
+                        $("p").css('visibility', 'visible');
+                    });
+            //    $("#id '+i'").click(function () {
+ $('table tr td #Id').click(function () {
+            if ($('input[type="checkbox"]').prop("checked") == true) {
+                var row = $(this).closest("tr");
+                var dataname = row.cells[0].innerHTML;
+                //var id = row.cells[1].innerHTML;
+                var dataid = row.cells[2].innerHTML;
+                var params = { id: dataid };
+                 confirm({
+                title: 'Confirm!',
+                content: 'Simple confirm!',
+                buttons: {
+                    confirm: function () {
+                   $.ajax({
+                       type: "POST",
+                       contentType: "application/json; charset=utf-8",
+                        url: "/Users/UpdatePassword",
+                        data: JSON.stringify(params),
+                        success: function(msg){
+                            alert("Update Password");
+                           
+                        },
+                        error: function (xhr) {
+                            alert("error");
+                        }
+                    });
+                    },
+                    cancel: function () {
+                       
+                    },
+                   
+                }
+            });
+              
+               
+            }
+           
+
+
+            /////////////////////
+
+                //$("#test").val(JSON.stringify(uap));
+                //$("Select #Id").change(function () {
+
+                //    var bla = $($(this).find('#Id')).val();
+                //    $('#UserId').val = bla;
+                //})
+                @*$.ajax({
+                    url: '@Url.Action("AccessFor", "user_access_permission")', //
+                    dataType: "json",
+                    data: JSON.stringify({ uap: uap }),
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " record(s) updated.");
+                    },
+                    error: function (xhr) {
+                        alert("error");
+                    }
+                });*@
+                //});
+        });
+      
+     });
+
+    </script>
+}

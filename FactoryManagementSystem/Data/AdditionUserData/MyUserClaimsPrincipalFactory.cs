@@ -21,7 +21,7 @@ namespace FactoryManagementSystem.Data.AdditionUserData
             var identity = await base.GenerateClaimsAsync(user);
             //identity.AddClaim(new Claim("ContactName", user.ContactName ?? "[Click to edit profile]"));
 
-            identity.AddClaim(new Claim("Name", user.Name ?? "[Click to edit profile]"));
+            identity.AddClaim(new Claim("UserName", user.UserName ?? "[Click to edit profile]"));
 
             return identity;
         }

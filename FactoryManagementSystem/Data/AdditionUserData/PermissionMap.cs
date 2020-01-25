@@ -13,9 +13,10 @@ namespace FactoryManagementSystem.Data.AdditionUserData
         public string ApplicationUserId { get; set; }
         public Nullable<int> RoleId { get; set; }
         public bool IsPermitted { get; set; }
-       
+        public int BranchId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
         public virtual UserRole UserRole { get; set; }
+
     }
 }

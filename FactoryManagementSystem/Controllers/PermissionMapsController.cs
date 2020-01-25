@@ -13,17 +13,18 @@ namespace FactoryManagementSystem.Controllers
     public class PermissionMapsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+        private readonly string DefaultUserId = "ba116d33-d916-4704-a7a1-fa2325a9c8da";
         public PermissionMapsController(ApplicationDbContext context)
         {
             _context = context;
+         
         }
 
         // GET: PermissionMaps
         public async Task<IActionResult> Index()
         {
-            var data =_context.Users.Where(x => x.Id == "c912ce10-a3bd-41be-84e1-fcc2e01c97d6");
-            var applicationDbContext = _context.PermissionMaps.Include(p => p.User).Include(p => p.UserRole);
+            //var data =_context.Users.Where(x => x.Id == "c912ce10-a3bd-41be-84e1-fcc2e01c97d6");
+            var applicationDbContext = _context.PermissionMaps.Where(x => x.User.Id != DefaultUserId).Include(p => p.User).Include(p => p.UserRole);
             return View(await applicationDbContext.ToListAsync());
         }
         [HttpGet]
@@ -32,12 +33,15 @@ namespace FactoryManagementSystem.Controllers
             ModelState.Clear();
             UserId = Id;
             var userList = _context.Users;
+            
             if (UserId == null)
             {
+                
+               
                 ViewBag.IsNullUserId = UserId;
                 ViewBag.UserList = new SelectList(userList, "Id", "UserName");
-                UserId = userList.FirstOrDefault().Id;
-              
+                UserId = DefaultUserId;
+
                 //return BadRequest();
             }
             else
@@ -57,9 +61,17 @@ namespace FactoryManagementSystem.Controllers
         public ActionResult AccessFor(string uap)
         {
             var Data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<PermissionMap>>(uap);
-
+            var permissionId= Data.FirstOrDefault().PermissionId;
+            
+            var defaultUserExist = _context.PermissionMaps.Where(x => x.PermissionId == permissionId).Any(x=>x.ApplicationUserId == DefaultUserId);
             foreach (var data in Data)
             {
+               
+                if (defaultUserExist)
+                {
+                    ViewBag.Message = "Please Select a User First.";
+                    return RedirectToAction("AccessFor");
+                }
                 PermissionMap current_uap = _context.PermissionMaps.Find(data.PermissionId);
                 current_uap.IsPermitted = bool.Parse(data.IsPermitted.ToString());
             }
@@ -89,6 +101,8 @@ namespace FactoryManagementSystem.Controllers
 
             return View(permissionMap);
         }
+        
+
 
         // GET: PermissionMaps/Create
         //public IActionResult Create()

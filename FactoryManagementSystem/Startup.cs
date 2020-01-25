@@ -44,7 +44,9 @@ namespace FactoryManagementSystem
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<IUserPermissionRepo, UserParmissionRepo>();
-            
+            services.AddTransient<IEmployeeMainRepo, EmployeeMainRepo>();
+
+
             //add identity
             //services.AddIdentity<ApplicationUser, IdentityRole>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>()

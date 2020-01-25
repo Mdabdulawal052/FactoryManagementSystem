@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FactoryManagementSystem.Data.AdditionUserData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +31,8 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
         }
 
         public string Username { get; set; }
+        public byte[] Img { get; set; }
+
 
         public bool IsEmailConfirmed { get; set; }
 
@@ -47,10 +51,18 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-           
-            [Display(Name = "Name")]
-            public string Name { get; set; }
-           
+
+            //[Display(Name = "Name")]
+            //public string UserName { get; set; }
+            [Display(Name = "Address")]
+            public string Address { get; set; }
+            [Display(Name = "Gender")]
+            public string Gender { get; set; }
+            [Display(Name = "Picture")]
+            public byte[] Image { get; set; }
+            [Display(Name = "Is Active")]
+            public bool Status { get; set; }
+
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -66,12 +78,17 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
-
+            Img = user.Image;
             Input = new InputModel
             {
                 Email = email,
                 PhoneNumber = phoneNumber,
-                Name=user.Name
+                //UserName = user.UserName,
+                Address = user.Address,
+                Gender = user.Gender,
+                Image = user.Image,
+                Status = user.Status
+
             };
 
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
@@ -79,12 +96,12 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile Image)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return Page();
+            //}
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -113,10 +130,46 @@ namespace FactoryManagementSystem.Areas.Identity.Pages.Account.Manage
                     throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
                 }
             }
-            if (Input.Name != user.Name)
+            //if (Input.UserName != user.UserName)
+            //{
+            //    user.UserName = Input.UserName;
+            //}
+            if (Input.Address != user.Address)
             {
-                user.Name = Input.Name;
+                user.Address = Input.Address;
             }
+            if (Input.Gender != user.Gender)
+            {
+                user.Gender = Input.Gender;
+            }
+            if (Image != null)
+            {
+                if (Image.Length > 0)
+
+                //Convert Image to byte and save to database
+
+                {
+
+                    byte[] p1 = null;
+                    using (var fs1 = Image.OpenReadStream())
+                    using (var ms1 = new MemoryStream())
+                    {
+                        fs1.CopyTo(ms1);
+                        p1 = ms1.ToArray();
+                    }
+                    user.Image = p1;
+
+                }
+            }
+            //if (Input.Image != user.Image)
+            //{
+            //    user.Image = Input.Image;
+            //}
+            if (Input.Status != user.Status)
+            {
+                user.Status = Input.Status;
+            }
+            await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
